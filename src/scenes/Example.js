@@ -14,5 +14,7 @@ export default class Example extends Phaser.Scene {
     this.load.image("red", "assets/particles/red.png");
   }
 
-  create() {}
+  create() {
+    this.add.image(400, 300, "sky");
+  }
 }

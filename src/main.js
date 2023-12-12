@@ -1,21 +1,5 @@
 import Phaser from "./lib/phaser.js";
-// import Example from "./scenes/Example.js";
-
-class Example extends Phaser.Scene {
-  constructor() {
-    super();
-  }
-
-  preload() {
-    console.log("in the preload of segszamle");
-
-    this.load.image("sky", "../assets/space3.png");
-  }
-
-  create() {
-    this.add.image(400, 300, "sky");
-  }
-}
+import Example from "./scenes/Example.js";
 
 export default new Phaser.Game({
   type: Phaser.AUTO,
