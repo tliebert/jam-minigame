@@ -1,8 +1,8 @@
 import Phaser from "../lib/phaser.js";
 
-export default class Example extends Phaser.Scene {
+export default class Example2 extends Phaser.Scene {
   constructor() {
-    super("example");
+    super("example2");
   }
 
   preload() {
@@ -15,6 +15,6 @@ export default class Example extends Phaser.Scene {
   }
 
   create() {
-    this.add.image(400, 300, "sky");
+    this.add.image(400, 300, "logo");
   }
 }
