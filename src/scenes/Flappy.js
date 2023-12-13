@@ -319,48 +319,50 @@ export default class Flappy extends Phaser.Scene {
 
     this.prepareGame(this);
 
-    gameOverBanner = this.add.image(
+    this.gameOverBanner = this.add.image(
       this.assets.scene.width,
       206,
       this.assets.scene.gameOver
     );
-    gameOverBanner.setDepth(20);
-    gameOverBanner.visible = false;
+    this.gameOverBanner.setDepth(20);
+    this.gameOverBanner.visible = false;
 
-    restartButton = this.add
+    this.restartButton = this.add
       .image(this.assets.scene.width, 300, this.assets.scene.restart)
       .setInteractive();
-    restartButton.on("pointerdown", restartGame);
-    restartButton.setDepth(20);
-    restartButton.visible = false;
+    this.restartButton.on("pointerdown", this.restartGame);
+    this.restartButton.setDepth(20);
+    this.restartButton.visible = false;
   }
 
   update() {
-    if (gameOver || !gameStarted) return;
+    if (this.gameOver || !this.gameStarted) return;
 
-    if (framesMoveUp > 0) framesMoveUp--;
-    else if (Phaser.Input.Keyboard.JustDown(upButton)) this.moveBird();
+    if (this.framesMoveUp > 0) this.framesMoveUp--;
+    else if (Phaser.Input.Keyboard.JustDown(this.upButton)) this.moveBird();
     else {
-      player.setVelocityY(120);
+      this.player.setVelocityY(120);
 
-      if (player.angle < 90) player.angle += 1;
+      if (this.player.angle < 90) {
+        this.player.angle += 1;
+      }
     }
 
-    pipesGroup.children.iterate(function (child) {
+    this.pipesGroup.children.iterate(function (child) {
       if (child == undefined) return;
 
       if (child.x < -50) child.destroy();
       else child.setVelocityX(-100);
     });
 
-    gapsGroup.children.iterate(function (child) {
+    this.gapsGroup.children.iterate(function (child) {
       child.body.setVelocityX(-100);
     });
 
-    nextPipes++;
-    if (nextPipes === 130) {
-      makePipes(game.scene.scenes[0]);
-      nextPipes = 0;
+    this.nextPipes++;
+    if (this.nextPipes === 130) {
+      this.makePipes();
+      this.nextPipes = 0;
     }
   }
 
@@ -369,61 +371,94 @@ export default class Flappy extends Phaser.Scene {
    *  @param {object} player - Game object that collided, in this case the bird.
    */
 
-  hitBird(player) {
+  hitBird = () => {
+    console.log(this);
     this.physics.pause();
 
-    gameOver = true;
-    gameStarted = false;
+    this.gameOver = true;
+    this.gameStarted = false;
 
-    player.anims.play(getAnimationBird(birdName).stop);
-    ground.anims.play(this.assets.animation.ground.stop);
+    this.player.anims.play(this.getAnimationBird(this.birdName).stop);
+    this.ground.anims.play(this.assets.animation.ground.stop);
 
-    gameOverBanner.visible = true;
-    restartButton.visible = true;
-  }
+    this.gameOverBanner.visible = true;
+    this.restartButton.visible = true;
+  };
 
   /**
    *   Update the scoreboard.
    *   @param {object} _ - Game object that overlapped, in this case the bird (ignored).
    *   @param {object} gap - Game object that was overlapped, in this case the gap.
    */
+  updateScoreboard = () => {
+    this.scoreboardGroup.clear(true, true);
+
+    const scoreAsString = this.score.toString();
+    if (scoreAsString.length == 1) {
+      this.scoreboardGroup
+        .create(
+          this.assets.scene.width,
+          30,
+          this.assets.scoreboard.base + this.score
+        )
+        .setDepth(10);
+    } else {
+      let initialPosition =
+        this.assets.scene.width -
+        (this.score.toString().length * this.assets.scoreboard.width) / 2;
+
+      for (let i = 0; i < scoreAsString.length; i++) {
+        this.scoreboardGroup
+          .create(
+            initialPosition,
+            30,
+            this.assets.scoreboard.base + scoreAsString[i]
+          )
+          .setDepth(10);
+        initialPosition += this.assets.scoreboard.width;
+      }
+    }
+  };
+
   updateScore(_, gap) {
-    score++;
+    this.score++;
     gap.destroy();
 
-    if (score % 10 == 0) {
-      backgroundDay.visible = !backgroundDay.visible;
-      backgroundNight.visible = !backgroundNight.visible;
+    if (this.score % 10 == 0) {
+      this.backgroundDay.visible = !this.backgroundDay.visible;
+      this.backgroundNight.visible = !this.backgroundNight.visible;
 
-      if (currentPipe === this.assets.obstacle.pipe.green)
-        currentPipe = this.assets.obstacle.pipe.red;
-      else currentPipe = this.assets.obstacle.pipe.green;
+      if (this.currentPipe === this.assets.obstacle.pipe.green)
+        this.currentPipe = this.assets.obstacle.pipe.red;
+      else this.currentPipe = this.assets.obstacle.pipe.green;
     }
 
-    updateScoreboard();
+    console.log(this);
+    this.scene.updateScoreboard();
   }
 
   /**
    * Create pipes and gap in the game.
    * @param {object} scene - Game scene.
    */
-  makePipes(scene) {
-    if (!gameStarted || gameOver) return;
+  makePipes() {
+    // removed soon
+    if (!this.gameStarted || this.gameOver) return;
 
     const pipeTopY = Phaser.Math.Between(-120, 120);
 
-    const gap = scene.add.line(288, pipeTopY + 210, 0, 0, 0, 98);
-    gapsGroup.add(gap);
+    const gap = this.add.line(288, pipeTopY + 210, 0, 0, 0, 98);
+    this.gapsGroup.add(gap);
     gap.body.allowGravity = false;
     gap.visible = false;
 
-    const pipeTop = pipesGroup.create(288, pipeTopY, currentPipe.top);
+    const pipeTop = this.pipesGroup.create(288, pipeTopY, this.currentPipe.top);
     pipeTop.body.allowGravity = false;
 
-    const pipeBottom = pipesGroup.create(
+    const pipeBottom = this.pipesGroup.create(
       288,
       pipeTopY + 420,
-      currentPipe.bottom
+      this.currentPipe.bottom
     );
     pipeBottom.body.allowGravity = false;
   }
@@ -431,15 +466,20 @@ export default class Flappy extends Phaser.Scene {
   /**
    * Move the bird in the screen.
    */
-  moveBird() {
-    if (gameOver) return;
+  moveBird = () => {
+    if (this.gameOver) {
+      return;
+    }
 
-    if (!gameStarted) startGame(game.scene.scenes[0]);
+    if (!this.gameStarted) {
+      console.log(this);
+      this.startGame();
+    }
 
-    player.setVelocityY(-400);
-    player.angle = -15;
-    framesMoveUp = 5;
-  }
+    this.player.setVelocityY(-400);
+    this.player.angle = -15;
+    this.framesMoveUp = 5;
+  };
 
   /**
    * Get a random bird color.
@@ -477,35 +517,6 @@ export default class Flappy extends Phaser.Scene {
   /**
    * Update the game scoreboard.
    */
-  updateScoreboard() {
-    scoreboardGroup.clear(true, true);
-
-    const scoreAsString = score.toString();
-    if (scoreAsString.length == 1)
-      scoreboardGroup
-        .create(
-          this.assets.scene.width,
-          30,
-          this.assets.scoreboard.base + score
-        )
-        .setDepth(10);
-    else {
-      let initialPosition =
-        this.assets.scene.width -
-        (score.toString().length * this.assets.scoreboard.width) / 2;
-
-      for (let i = 0; i < scoreAsString.length; i++) {
-        scoreboardGroup
-          .create(
-            initialPosition,
-            30,
-            this.assets.scoreboard.base + scoreAsString[i]
-          )
-          .setDepth(10);
-        initialPosition += this.assets.scoreboard.width;
-      }
-    }
-  }
 
   /**
    * Restart the game.
@@ -579,17 +590,20 @@ export default class Flappy extends Phaser.Scene {
    * Start the game, create pipes and hide the main menu.
    * @param {object} scene - Game scene.
    */
-  startGame(scene) {
+
+  startGame() {
+    console.log("start game function reached");
+    // change from scene to nothing?
     this.gameStarted = true;
     this.messageInitial.visible = false;
 
-    const score0 = scoreboardGroup.create(
+    const score0 = this.scoreboardGroup.create(
       this.assets.scene.width,
       30,
       this.assets.scoreboard.number0
     );
     score0.setDepth(20);
 
-    makePipes(scene);
+    this.makePipes();
   }
 }
