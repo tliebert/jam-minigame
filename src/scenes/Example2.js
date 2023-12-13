@@ -6,7 +6,7 @@ export default class Example2 extends Phaser.Scene {
   }
 
   preload() {
-    console.log("in the preload of example");
+    console.log("example 2 preload");
     this.load.setBaseURL("https://labs.phaser.io");
 
     this.load.image("sky", "assets/skies/space3.png");
