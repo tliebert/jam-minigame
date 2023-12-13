@@ -112,102 +112,131 @@ export default class Flappy extends Phaser.Scene {
 
   preload() {
     // Backgrounds and ground
-    this.load.image(assets.scene.background.day, "assets/background-day.png");
     this.load.image(
-      assets.scene.background.night,
-      "assets/background-night.png"
+      this.assets.scene.background.day,
+      "../../assets/background-day.png"
     );
-    this.load.spritesheet(assets.scene.ground, "assets/ground-sprite.png", {
-      frameWidth: 336,
-      frameHeight: 112,
-    });
+    this.load.image(
+      this.assets.scene.background.night,
+      "../../assets/background-night.png"
+    );
+    this.load.spritesheet(
+      this.assets.scene.ground,
+      "../../assets/ground-sprite.png",
+      {
+        frameWidth: 336,
+        frameHeight: 112,
+      }
+    );
 
     // Pipes
     this.load.image(
-      assets.obstacle.pipe.green.top,
-      "assets/pipe-green-top.png"
+      this.assets.obstacle.pipe.green.top,
+      "../../assets/pipe-green-top.png"
     );
     this.load.image(
-      assets.obstacle.pipe.green.bottom,
-      "assets/pipe-green-bottom.png"
+      this.assets.obstacle.pipe.green.bottom,
+      "../../assets/pipe-green-bottom.png"
     );
-    this.load.image(assets.obstacle.pipe.red.top, "assets/pipe-red-top.png");
     this.load.image(
-      assets.obstacle.pipe.red.bottom,
-      "assets/pipe-red-bottom.png"
+      this.assets.obstacle.pipe.red.top,
+      "../../assets/pipe-red-top.png"
+    );
+    this.load.image(
+      this.assets.obstacle.pipe.red.bottom,
+      "../../assets/pipe-red-bottom.png"
     );
 
     // Start game
-    this.load.image(assets.scene.messageInitial, "assets/message-initial.png");
+    this.load.image(
+      this.assets.scene.messageInitial,
+      "../../assets/message-initial.png"
+    );
 
     // End game
-    this.load.image(assets.scene.gameOver, "assets/gameover.png");
-    this.load.image(assets.scene.restart, "assets/restart-button.png");
+    this.load.image(this.assets.scene.gameOver, "../../assets/gameover.png");
+    this.load.image(
+      this.assets.scene.restart,
+      "../../assets/restart-button.png"
+    );
 
     // Birds
-    this.load.spritesheet(assets.bird.red, "assets/bird-red-sprite.png", {
-      frameWidth: 34,
-      frameHeight: 24,
-    });
-    this.load.spritesheet(assets.bird.blue, "assets/bird-blue-sprite.png", {
-      frameWidth: 34,
-      frameHeight: 24,
-    });
-    this.load.spritesheet(assets.bird.yellow, "assets/bird-yellow-sprite.png", {
-      frameWidth: 34,
-      frameHeight: 24,
-    });
+    this.load.spritesheet(
+      this.assets.bird.red,
+      "../../assets/bird-red-sprite.png",
+      {
+        frameWidth: 34,
+        frameHeight: 24,
+      }
+    );
+    this.load.spritesheet(
+      this.assets.bird.blue,
+      "../../assets/bird-blue-sprite.png",
+      {
+        frameWidth: 34,
+        frameHeight: 24,
+      }
+    );
+    this.load.spritesheet(
+      this.assets.bird.yellow,
+      "../../assets/bird-yellow-sprite.png",
+      {
+        frameWidth: 34,
+        frameHeight: 24,
+      }
+    );
 
     // Numbers
-    this.load.image(assets.scoreboard.number0, "assets/number0.png");
-    this.load.image(assets.scoreboard.number1, "assets/number1.png");
-    this.load.image(assets.scoreboard.number2, "assets/number2.png");
-    this.load.image(assets.scoreboard.number3, "assets/number3.png");
-    this.load.image(assets.scoreboard.number4, "assets/number4.png");
-    this.load.image(assets.scoreboard.number5, "assets/number5.png");
-    this.load.image(assets.scoreboard.number6, "assets/number6.png");
-    this.load.image(assets.scoreboard.number7, "assets/number7.png");
-    this.load.image(assets.scoreboard.number8, "assets/number8.png");
-    this.load.image(assets.scoreboard.number9, "assets/number9.png");
+    this.load.image(this.assets.scoreboard.number0, "../../assets/number0.png");
+    this.load.image(this.assets.scoreboard.number1, "../../assets/number1.png");
+    this.load.image(this.assets.scoreboard.number2, "../../assets/number2.png");
+    this.load.image(this.assets.scoreboard.number3, "../../assets/number3.png");
+    this.load.image(this.assets.scoreboard.number4, "../../assets/number4.png");
+    this.load.image(this.assets.scoreboard.number5, "../../assets/number5.png");
+    this.load.image(this.assets.scoreboard.number6, "../../assets/number6.png");
+    this.load.image(this.assets.scoreboard.number7, "../../assets/number7.png");
+    this.load.image(this.assets.scoreboard.number8, "../../assets/number8.png");
+    this.load.image(this.assets.scoreboard.number9, "../../assets/number9.png");
   }
 
   create() {
-    backgroundDay = this.add
-      .image(assets.scene.width, 256, assets.scene.background.day)
+    this.backgroundDay = this.add
+      .image(this.assets.scene.width, 256, this.assets.scene.background.day)
       .setInteractive();
-    backgroundDay.on("pointerdown", moveBird);
-    backgroundNight = this.add
-      .image(assets.scene.width, 256, assets.scene.background.night)
+    this.backgroundDay.on("pointerdown", this.moveBird);
+    this.backgroundNight = this.add
+      .image(this.assets.scene.width, 256, this.assets.scene.background.night)
       .setInteractive();
-    backgroundNight.visible = false;
-    backgroundNight.on("pointerdown", moveBird);
+    this.backgroundNight.visible = false;
+    this.backgroundNight.on("pointerdown", this.moveBird);
 
-    gapsGroup = this.physics.add.group();
-    pipesGroup = this.physics.add.group();
-    scoreboardGroup = this.physics.add.staticGroup();
-
-    ground = this.physics.add.sprite(
-      assets.scene.width,
+    this.gapsGroup = this.physics.add.group();
+    this.pipesGroup = this.physics.add.group();
+    this.scoreboardGroup = this.physics.add.staticGroup();
+    this.ground = this.physics.add.sprite(
+      this.assets.scene.width,
       458,
-      assets.scene.ground
+      this.assets.scene.ground
     );
-    ground.setCollideWorldBounds(true);
-    ground.setDepth(10);
+    this.ground.setCollideWorldBounds(true);
+    this.ground.setDepth(10);
 
-    messageInitial = this.add.image(
-      assets.scene.width,
+    this.messageInitial = this.add.image(
+      this.assets.scene.width,
       156,
-      assets.scene.messageInitial
+      this.assets.scene.messageInitial
     );
-    messageInitial.setDepth(30);
-    messageInitial.visible = false;
+    this.messageInitial.setDepth(30);
+    this.messageInitial.visible = false;
 
-    upButton = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+    this.upButton = this.input.keyboard.addKey(
+      Phaser.Input.Keyboard.KeyCodes.UP
+    );
 
     // Ground animations
     this.anims.create({
-      key: assets.animation.ground.moving,
-      frames: this.anims.generateFrameNumbers(assets.scene.ground, {
+      key: this.assets.animation.ground.moving,
+      frames: this.anims.generateFrameNumbers(this.assets.scene.ground, {
         start: 0,
         end: 2,
       }),
@@ -215,10 +244,10 @@ export default class Flappy extends Phaser.Scene {
       repeat: -1,
     });
     this.anims.create({
-      key: assets.animation.ground.stop,
+      key: this.assets.animation.ground.stop,
       frames: [
         {
-          key: assets.scene.ground,
+          key: this.assets.scene.ground,
           frame: 0,
         },
       ],
@@ -227,8 +256,8 @@ export default class Flappy extends Phaser.Scene {
 
     // Red Bird Animations
     this.anims.create({
-      key: assets.animation.bird.red.clapWings,
-      frames: this.anims.generateFrameNumbers(assets.bird.red, {
+      key: this.assets.animation.bird.red.clapWings,
+      frames: this.anims.generateFrameNumbers(this.assets.bird.red, {
         start: 0,
         end: 2,
       }),
@@ -236,10 +265,10 @@ export default class Flappy extends Phaser.Scene {
       repeat: -1,
     });
     this.anims.create({
-      key: assets.animation.bird.red.stop,
+      key: this.assets.animation.bird.red.stop,
       frames: [
         {
-          key: assets.bird.red,
+          key: this.assets.bird.red,
           frame: 1,
         },
       ],
@@ -248,8 +277,8 @@ export default class Flappy extends Phaser.Scene {
 
     // Blue Bird animations
     this.anims.create({
-      key: assets.animation.bird.blue.clapWings,
-      frames: this.anims.generateFrameNumbers(assets.bird.blue, {
+      key: this.assets.animation.bird.blue.clapWings,
+      frames: this.anims.generateFrameNumbers(this.assets.bird.blue, {
         start: 0,
         end: 2,
       }),
@@ -257,10 +286,10 @@ export default class Flappy extends Phaser.Scene {
       repeat: -1,
     });
     this.anims.create({
-      key: assets.animation.bird.blue.stop,
+      key: this.assets.animation.bird.blue.stop,
       frames: [
         {
-          key: assets.bird.blue,
+          key: this.assets.bird.blue,
           frame: 1,
         },
       ],
@@ -269,8 +298,8 @@ export default class Flappy extends Phaser.Scene {
 
     // Yellow Bird animations
     this.anims.create({
-      key: assets.animation.bird.yellow.clapWings,
-      frames: this.anims.generateFrameNumbers(assets.bird.yellow, {
+      key: this.assets.animation.bird.yellow.clapWings,
+      frames: this.anims.generateFrameNumbers(this.assets.bird.yellow, {
         start: 0,
         end: 2,
       }),
@@ -278,28 +307,28 @@ export default class Flappy extends Phaser.Scene {
       repeat: -1,
     });
     this.anims.create({
-      key: assets.animation.bird.yellow.stop,
+      key: this.assets.animation.bird.yellow.stop,
       frames: [
         {
-          key: assets.bird.yellow,
+          key: this.assets.bird.yellow,
           frame: 1,
         },
       ],
       frameRate: 20,
     });
 
-    prepareGame(this);
+    this.prepareGame(this);
 
     gameOverBanner = this.add.image(
-      assets.scene.width,
+      this.assets.scene.width,
       206,
-      assets.scene.gameOver
+      this.assets.scene.gameOver
     );
     gameOverBanner.setDepth(20);
     gameOverBanner.visible = false;
 
     restartButton = this.add
-      .image(assets.scene.width, 300, assets.scene.restart)
+      .image(this.assets.scene.width, 300, this.assets.scene.restart)
       .setInteractive();
     restartButton.on("pointerdown", restartGame);
     restartButton.setDepth(20);
@@ -310,7 +339,7 @@ export default class Flappy extends Phaser.Scene {
     if (gameOver || !gameStarted) return;
 
     if (framesMoveUp > 0) framesMoveUp--;
-    else if (Phaser.Input.Keyboard.JustDown(upButton)) moveBird();
+    else if (Phaser.Input.Keyboard.JustDown(upButton)) this.moveBird();
     else {
       player.setVelocityY(120);
 
@@ -347,7 +376,7 @@ export default class Flappy extends Phaser.Scene {
     gameStarted = false;
 
     player.anims.play(getAnimationBird(birdName).stop);
-    ground.anims.play(assets.animation.ground.stop);
+    ground.anims.play(this.assets.animation.ground.stop);
 
     gameOverBanner.visible = true;
     restartButton.visible = true;
@@ -366,9 +395,9 @@ export default class Flappy extends Phaser.Scene {
       backgroundDay.visible = !backgroundDay.visible;
       backgroundNight.visible = !backgroundNight.visible;
 
-      if (currentPipe === assets.obstacle.pipe.green)
-        currentPipe = assets.obstacle.pipe.red;
-      else currentPipe = assets.obstacle.pipe.green;
+      if (currentPipe === this.assets.obstacle.pipe.green)
+        currentPipe = this.assets.obstacle.pipe.red;
+      else currentPipe = this.assets.obstacle.pipe.green;
     }
 
     updateScoreboard();
@@ -419,12 +448,12 @@ export default class Flappy extends Phaser.Scene {
   getRandomBird() {
     switch (Phaser.Math.Between(0, 2)) {
       case 0:
-        return assets.bird.red;
+        return this.assets.bird.red;
       case 1:
-        return assets.bird.blue;
+        return this.assets.bird.blue;
       case 2:
       default:
-        return assets.bird.yellow;
+        return this.assets.bird.yellow;
     }
   }
 
@@ -435,13 +464,13 @@ export default class Flappy extends Phaser.Scene {
    */
   getAnimationBird(birdColor) {
     switch (birdColor) {
-      case assets.bird.red:
-        return assets.animation.bird.red;
-      case assets.bird.blue:
-        return assets.animation.bird.blue;
-      case assets.bird.yellow:
+      case this.assets.bird.red:
+        return this.assets.animation.bird.red;
+      case this.assets.bird.blue:
+        return this.assets.animation.bird.blue;
+      case this.assets.bird.yellow:
       default:
-        return assets.animation.bird.yellow;
+        return this.assets.animation.bird.yellow;
     }
   }
 
@@ -454,22 +483,26 @@ export default class Flappy extends Phaser.Scene {
     const scoreAsString = score.toString();
     if (scoreAsString.length == 1)
       scoreboardGroup
-        .create(assets.scene.width, 30, assets.scoreboard.base + score)
+        .create(
+          this.assets.scene.width,
+          30,
+          this.assets.scoreboard.base + score
+        )
         .setDepth(10);
     else {
       let initialPosition =
-        assets.scene.width -
-        (score.toString().length * assets.scoreboard.width) / 2;
+        this.assets.scene.width -
+        (score.toString().length * this.assets.scoreboard.width) / 2;
 
       for (let i = 0; i < scoreAsString.length; i++) {
         scoreboardGroup
           .create(
             initialPosition,
             30,
-            assets.scoreboard.base + scoreAsString[i]
+            this.assets.scoreboard.base + scoreAsString[i]
           )
           .setDepth(10);
-        initialPosition += assets.scoreboard.width;
+        initialPosition += this.assets.scoreboard.width;
       }
     }
   }
@@ -488,7 +521,7 @@ export default class Flappy extends Phaser.Scene {
     restartButton.visible = false;
 
     const gameScene = game.scene.scenes[0];
-    prepareGame(gameScene);
+    prepareGame();
 
     gameScene.physics.resume();
   }
@@ -497,28 +530,49 @@ export default class Flappy extends Phaser.Scene {
    * Restart all variable and configurations, show main and recreate the bird.
    * @param {object} scene - Game scene.
    */
-  prepareGame(scene) {
-    framesMoveUp = 0;
-    nextPipes = 0;
-    currentPipe = assets.obstacle.pipe.green;
-    score = 0;
-    gameOver = false;
-    backgroundDay.visible = true;
-    backgroundNight.visible = false;
-    messageInitial.visible = true;
+  prepareGame() {
+    this.framesMoveUp = 0;
+    this.nextPipes = 0;
+    this.currentPipe = this.assets.obstacle.pipe.green;
+    this.score = 0;
+    this.gameOver = false;
+    this.backgroundDay.visible = true;
+    this.backgroundNight.visible = false;
+    this.messageInitial.visible = true;
 
-    birdName = getRandomBird();
-    player = scene.physics.add.sprite(60, 265, birdName);
-    player.setCollideWorldBounds(true);
-    player.anims.play(getAnimationBird(birdName).clapWings, true);
-    player.body.allowGravity = false;
+    this.birdName = this.getRandomBird();
+    this.player = this.physics.add.sprite(60, 265, this.birdName);
+    this.player.setCollideWorldBounds(true);
+    this.player.anims.play(
+      this.getAnimationBird(this.birdName).clapWings,
+      true
+    );
+    this.player.body.allowGravity = false;
 
-    scene.physics.add.collider(player, ground, hitBird, null, scene);
-    scene.physics.add.collider(player, pipesGroup, hitBird, null, scene);
+    this.physics.add.collider(
+      this.player,
+      this.ground,
+      this.hitBird,
+      null,
+      this.scene
+    );
+    this.physics.add.collider(
+      this.player,
+      this.pipesGroup,
+      this.hitBird,
+      null,
+      this.scene
+    );
 
-    scene.physics.add.overlap(player, gapsGroup, updateScore, null, scene);
+    this.physics.add.overlap(
+      this.player,
+      this.gapsGroup,
+      this.updateScore,
+      null,
+      this.scene
+    );
 
-    ground.anims.play(assets.animation.ground.moving, true);
+    this.ground.anims.play(this.assets.animation.ground.moving, true);
   }
 
   /**
@@ -526,13 +580,13 @@ export default class Flappy extends Phaser.Scene {
    * @param {object} scene - Game scene.
    */
   startGame(scene) {
-    gameStarted = true;
-    messageInitial.visible = false;
+    this.gameStarted = true;
+    this.messageInitial.visible = false;
 
     const score0 = scoreboardGroup.create(
-      assets.scene.width,
+      this.assets.scene.width,
       30,
-      assets.scoreboard.number0
+      this.assets.scoreboard.number0
     );
     score0.setDepth(20);
 
