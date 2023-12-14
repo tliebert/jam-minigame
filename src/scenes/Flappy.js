@@ -106,11 +106,14 @@ export default class Flappy extends Phaser.Scene {
   gapsGroup;
   coin;
   coinsGroup;
+  resourceGroup;
+  resourceObject;
   nextPipes;
   currentPipe;
   scoreboardGroup;
   score;
   coinScore = 0;
+  itemVelocity = 400;
 
   preload() {
     // Backgrounds and ground
@@ -189,6 +192,9 @@ export default class Flappy extends Phaser.Scene {
     );
 
     this.load.image("coin", "../../assets/gold_1.png");
+    this.load.image("carrot", "../../assets/bronze_1.png");
+    this.load.image("bunny", "../../assets/jetpack.png");
+    this.load.image("wildcard", "../../assets/silver_1.png");
 
     // Numbers
     this.load.image(this.assets.scoreboard.number0, "../../assets/number0.png");
@@ -214,9 +220,19 @@ export default class Flappy extends Phaser.Scene {
     this.backgroundNight.visible = false;
     this.backgroundNight.on("pointerdown", this.moveBird);
 
+    if (!this.resourceObject) {
+      this.resourceObject = {
+        carrot: 0,
+        coin: 0,
+        bunny: 0,
+        wildcard: 0,
+      };
+    }
+
     this.gapsGroup = this.physics.add.group();
     this.pipesGroup = this.physics.add.group();
     this.coinsGroup = this.physics.add.group();
+    this.resourceGroup = this.physics.add.group();
 
     this.scoreboardGroup = this.physics.add.staticGroup();
     this.ground = this.physics.add.sprite(
@@ -342,6 +358,7 @@ export default class Flappy extends Phaser.Scene {
   }
 
   update() {
+    let velocity = this.itemVelocity;
     if (this.gameOver || !this.gameStarted) return;
 
     if (this.framesMoveUp > 0) {
@@ -360,15 +377,19 @@ export default class Flappy extends Phaser.Scene {
       if (child == undefined) return;
 
       if (child.x < -50) child.destroy();
-      else child.setVelocityX(-100);
+      else child.setVelocityX(-velocity);
     });
 
     this.gapsGroup.children.iterate(function (child) {
-      child.body.setVelocityX(-100);
+      child.body.setVelocityX(-velocity);
     });
 
     this.coinsGroup.children.iterate(function (child) {
-      child.body.setVelocityX(-100);
+      child.body.setVelocityX(-velocity);
+    });
+
+    this.resourceGroup.children.iterate(function (child) {
+      child.body.setVelocityX(-velocity);
     });
 
     this.nextPipes++;
@@ -461,7 +482,28 @@ export default class Flappy extends Phaser.Scene {
     this.coinsGroup.add(coin);
     coin.body.allowGravity = false;
 
-    //
+    const arrayOfResourceNames = ["carrot", "coin", "bunny", "wildcard"];
+    const arrayOfYValues = [135, 405, 675, 945];
+
+    const objectsToCreate = arrayOfResourceNames.map((iconName) => {
+      let index = Phaser.Math.Between(0, arrayOfYValues.length - 1);
+      let xvalue = arrayOfYValues.splice(index, 1);
+      return [iconName, Number(xvalue)];
+    });
+
+    console.log(objectsToCreate);
+
+    let groupOfResources = this.resourceGroup;
+
+    objectsToCreate.forEach((iconAndXPositionArray) => {
+      let resource = this.physics.add.sprite(
+        1920,
+        iconAndXPositionArray[1],
+        iconAndXPositionArray[0]
+      );
+      groupOfResources.add(resource);
+      resource.body.allowGravity = false;
+    });
 
     // const pipeTopY = Phaser.Math.Between(-120, 120);
 
@@ -559,9 +601,20 @@ export default class Flappy extends Phaser.Scene {
 
   handleCoinCollision = (player, coin) => {
     this.physics.world.disableBody(coin.body);
+    console.log("coin in coin collision", coin.gameObject);
     coin.destroy();
     this.coinScore++;
     console.log(this.coinScore);
+  };
+
+  handleResourceCollision = (player, resource) => {
+    this.physics.world.disableBody(resource.body);
+    console.log(resource);
+    console.log(resource.texture.key);
+    let key = resource.texture.key;
+    resource.destroy();
+    this.resourceObject[key]++;
+    console.log(this.resourceObject);
   };
 
   /**
@@ -615,6 +668,14 @@ export default class Flappy extends Phaser.Scene {
       this.player,
       this.coinsGroup,
       this.handleCoinCollision,
+      null,
+      this.scene
+    );
+
+    this.physics.add.overlap(
+      this.player,
+      this.resourceGroup,
+      this.handleResourceCollision,
       null,
       this.scene
     );
