@@ -235,7 +235,7 @@ export default class Flappy extends Phaser.Scene {
     this.coinsGroup = this.physics.add.group();
     this.resourceGroup = this.physics.add.group();
 
-    this.scoreboardGroup = this.physics.add.staticGroup();
+    // this.scoreboardGroup = this.physics.add.staticGroup();
     this.resourceScoreboard = this.add.group();
 
     // this.ground = this.physics.add.sprite(
@@ -614,7 +614,8 @@ export default class Flappy extends Phaser.Scene {
     this.pipesGroup.clear(true, true);
     this.pipesGroup.clear(true, true);
     this.gapsGroup.clear(true, true);
-    this.scoreboardGroup.clear(true, true);
+    // this.scoreboardGroup.clear(true, true);
+    this.resourceGroup.clear(true, true);
     this.player.destroy();
     this.gameOverBanner.visible = false;
     this.restartButton.visible = false;
@@ -719,12 +720,14 @@ export default class Flappy extends Phaser.Scene {
     this.gameStarted = true;
     this.messageInitial.visible = false;
 
-    const score0 = this.scoreboardGroup.create(
-      this.assets.scene.width / 2,
-      30,
-      this.assets.scoreboard.number0
-    );
-    score0.setDepth(20);
+    this.updateScore();
+
+    // const score0 = this.scoreboardGroup.create(
+    //   this.assets.scene.width / 2,
+    //   30,
+    //   this.assets.scoreboard.number0
+    // );
+    // score0.setDepth(20);
 
     this.makePipes();
   };
