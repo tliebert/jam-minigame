@@ -186,6 +186,8 @@ export default class Flappy extends Phaser.Scene {
       }
     );
 
+    this.load.image("coin", "../../assets/gold_1.png");
+
     // Numbers
     this.load.image(this.assets.scoreboard.number0, "../../assets/number0.png");
     this.load.image(this.assets.scoreboard.number1, "../../assets/number1.png");
@@ -449,6 +451,8 @@ export default class Flappy extends Phaser.Scene {
 
     const pipeTopY = Phaser.Math.Between(-120, 120);
 
+    this.physics.add.sprite(540, 540, "coin");
+
     const gap = this.add.line(288, pipeTopY + 210, 0, 0, 0, 98);
     this.gapsGroup.add(gap);
     gap.body.allowGravity = false;
@@ -459,7 +463,7 @@ export default class Flappy extends Phaser.Scene {
 
     const pipeBottom = this.pipesGroup.create(
       288,
-      pipeTopY + 420,
+      pipeTopY + 920,
       this.currentPipe.bottom
     );
     pipeBottom.body.allowGravity = false;
@@ -571,6 +575,7 @@ export default class Flappy extends Phaser.Scene {
       null,
       this.scene
     );
+
     this.physics.add.collider(
       this.player,
       this.pipesGroup,
@@ -583,6 +588,14 @@ export default class Flappy extends Phaser.Scene {
       this.player,
       this.gapsGroup,
       this.updateScore,
+      null,
+      this.scene
+    );
+
+    this.physics.add.overlap(
+      this.player,
+      this.coin,
+      this.handleCoinCollision,
       null,
       this.scene
     );
