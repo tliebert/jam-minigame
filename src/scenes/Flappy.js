@@ -504,9 +504,9 @@ export default class Flappy extends Phaser.Scene {
   makePipes = () => {
     if (!this.gameStarted || this.gameOver) return;
 
-    const coin = this.physics.add.sprite(1920, 540, "coin");
-    this.coinsGroup.add(coin);
-    coin.body.allowGravity = false;
+    // const coin = this.physics.add.sprite(1920, 540, "coin");
+    // this.coinsGroup.add(coin);
+    // coin.body.allowGravity = false;
 
     const arrayOfResourceNames = ["carrot", "coin", "bunny", "wildcard"];
     const arrayOfYValues = [135, 405, 675, 945];
