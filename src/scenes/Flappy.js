@@ -113,6 +113,7 @@ export default class Flappy extends Phaser.Scene {
   currentPipe;
   scoreboardGroup;
   score;
+  gravityToggle = false;
   coinScore = 0;
   itemVelocity = 400;
 
@@ -364,19 +365,22 @@ export default class Flappy extends Phaser.Scene {
 
   update() {
     let velocity = this.itemVelocity;
+
     if (this.gameOver || !this.gameStarted) return;
 
     if (this.framesMoveUp > 0) {
       this.framesMoveUp--;
-    } else if (Phaser.Input.Keyboard.JustDown(this.upButton)) {
-      this.moveBird();
-    } else {
-      this.player.setVelocityY(120);
-
-      if (this.player.angle < 90) {
-        this.player.angle += 1;
-      }
     }
+
+    if (this.input.activePointer.leftButtonDown()) {
+      console.log("left clicker down");
+      this.player.setVelocityY(300);
+    } else {
+      this.player.setVelocityY(-300);
+    }
+    //  else {
+    // //   this.physics.world.gravity.y = 200;
+    // // }
 
     this.pipesGroup.children.iterate(function (child) {
       if (child == undefined) return;
@@ -564,7 +568,7 @@ export default class Flappy extends Phaser.Scene {
       this.startGame();
     }
 
-    this.player.setVelocityY(-400);
+    this.player.setVelocityY(-20);
     this.player.angle = -15;
     this.framesMoveUp = 5; // vertical rise of bird on click
   };
