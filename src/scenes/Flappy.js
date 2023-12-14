@@ -557,7 +557,7 @@ export default class Flappy extends Phaser.Scene {
 
   handleCoinCollision = (player, coin) => {
     this.physics.world.disableBody(coin.body);
-    this.coin.destroy();
+    coin.destroy();
     this.coinScore++;
     console.log(this.coinScore);
   };
@@ -611,7 +611,7 @@ export default class Flappy extends Phaser.Scene {
 
     this.physics.add.overlap(
       this.player,
-      this.coin,
+      this.coinsGroup,
       this.handleCoinCollision,
       null,
       this.scene
