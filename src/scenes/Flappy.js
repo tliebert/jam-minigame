@@ -97,7 +97,6 @@ export default class Flappy extends Phaser.Scene {
   gameOverBanner;
   messageInitial;
   player;
-
   birdName;
   framesMoveUp;
   backgroundDay;
@@ -105,10 +104,13 @@ export default class Flappy extends Phaser.Scene {
   ground;
   pipesGroup;
   gapsGroup;
+  coin;
+  coinsGroup;
   nextPipes;
   currentPipe;
   scoreboardGroup;
   score;
+  coinScore = 0;
 
   preload() {
     // Backgrounds and ground
@@ -214,6 +216,8 @@ export default class Flappy extends Phaser.Scene {
 
     this.gapsGroup = this.physics.add.group();
     this.pipesGroup = this.physics.add.group();
+    this.coinsGroup = this.physics.add.group();
+
     this.scoreboardGroup = this.physics.add.staticGroup();
     this.ground = this.physics.add.sprite(
       this.assets.scene.width,
@@ -363,6 +367,10 @@ export default class Flappy extends Phaser.Scene {
       child.body.setVelocityX(-100);
     });
 
+    this.coinsGroup.children.iterate(function (child) {
+      child.body.setVelocityX(-100);
+    });
+
     this.nextPipes++;
     if (this.nextPipes === 130) {
       this.makePipes();
@@ -449,9 +457,11 @@ export default class Flappy extends Phaser.Scene {
     // removed soon
     if (!this.gameStarted || this.gameOver) return;
 
-    const pipeTopY = Phaser.Math.Between(-120, 120);
+    const coin = this.physics.add.sprite(270, 540, "coin");
+    this.coinsGroup.add(coin);
+    coin.body.allowGravity = false;
 
-    this.physics.add.sprite(540, 540, "coin");
+    const pipeTopY = Phaser.Math.Between(-120, 120);
 
     const gap = this.add.line(288, pipeTopY + 210, 0, 0, 0, 98);
     this.gapsGroup.add(gap);
@@ -543,6 +553,13 @@ export default class Flappy extends Phaser.Scene {
     this.prepareGame();
 
     gameScene.physics.resume();
+  };
+
+  handleCoinCollision = (player, coin) => {
+    this.physics.world.disableBody(coin.body);
+    this.coin.destroy();
+    this.coinScore++;
+    console.log(this.coinScore);
   };
 
   /**
