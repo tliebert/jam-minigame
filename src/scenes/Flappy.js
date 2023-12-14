@@ -240,6 +240,7 @@ export default class Flappy extends Phaser.Scene {
       458,
       this.assets.scene.ground
     );
+
     this.ground.setCollideWorldBounds(true);
     this.ground.setDepth(10);
 
@@ -340,6 +341,7 @@ export default class Flappy extends Phaser.Scene {
     });
 
     this.prepareGame(this);
+    // this.player.on("worldbounds", this.hitBird, this);
 
     this.gameOverBanner = this.add.image(
       this.assets.scene.width,
@@ -392,6 +394,10 @@ export default class Flappy extends Phaser.Scene {
       child.body.setVelocityX(-velocity);
     });
 
+    if (this.player.body.checkWorldBounds()) {
+      this.hitBird();
+    }
+
     this.nextPipes++;
 
     if (this.nextPipes === 130) {
@@ -406,7 +412,7 @@ export default class Flappy extends Phaser.Scene {
    */
 
   hitBird = () => {
-    console.log(this);
+    console.log("hitBird triggered");
     this.physics.pause();
 
     this.gameOver = true;
@@ -633,7 +639,8 @@ export default class Flappy extends Phaser.Scene {
 
     this.birdName = this.getRandomBird();
     this.player = this.physics.add.sprite(60, 265, this.birdName);
-    this.player.setCollideWorldBounds(true);
+    // this.player.setCollideWorldBounds(true);
+
     this.player.anims.play(
       this.getAnimationBird(this.birdName).clapWings,
       true
