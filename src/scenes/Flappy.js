@@ -44,9 +44,9 @@ export default class Flappy extends Phaser.Scene {
       },
     },
     scene: {
-      width: 144,
+      width: 1920,
       background: {
-        day: "background-day",
+        day: "mountain-baackground",
         night: "background-night",
       },
       ground: "ground",
@@ -114,7 +114,7 @@ export default class Flappy extends Phaser.Scene {
     // Backgrounds and ground
     this.load.image(
       this.assets.scene.background.day,
-      "../../assets/background-day.png"
+      "../../assets/mountain-background.png"
     );
     this.load.image(
       this.assets.scene.background.night,
@@ -201,7 +201,7 @@ export default class Flappy extends Phaser.Scene {
 
   create() {
     this.backgroundDay = this.add
-      .image(this.assets.scene.width, 256, this.assets.scene.background.day)
+      .image(960, 540, this.assets.scene.background.day)
       .setInteractive();
     this.backgroundDay.on("pointerdown", this.moveBird);
     this.backgroundNight = this.add
@@ -338,9 +338,11 @@ export default class Flappy extends Phaser.Scene {
   update() {
     if (this.gameOver || !this.gameStarted) return;
 
-    if (this.framesMoveUp > 0) this.framesMoveUp--;
-    else if (Phaser.Input.Keyboard.JustDown(this.upButton)) this.moveBird();
-    else {
+    if (this.framesMoveUp > 0) {
+      this.framesMoveUp--;
+    } else if (Phaser.Input.Keyboard.JustDown(this.upButton)) {
+      this.moveBird();
+    } else {
       this.player.setVelocityY(120);
 
       if (this.player.angle < 90) {
@@ -463,6 +465,8 @@ export default class Flappy extends Phaser.Scene {
     pipeBottom.body.allowGravity = false;
   };
 
+  makeRings = () => {};
+
   /**
    * Move the bird in the screen.
    */
@@ -478,7 +482,7 @@ export default class Flappy extends Phaser.Scene {
 
     this.player.setVelocityY(-400);
     this.player.angle = -15;
-    this.framesMoveUp = 5;
+    this.framesMoveUp = 5; // vertical rise of bird on click
   };
 
   /**

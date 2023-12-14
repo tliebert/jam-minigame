@@ -6,8 +6,8 @@ import Flappy from "./scenes/Flappy.js";
 
 export default new Phaser.Game({
   type: Phaser.AUTO,
-  width: 480,
-  height: 640,
+  width: 1920,
+  height: 1080,
   scene: [Flappy, Controller, Example, Example2],
   physics: {
     default: "arcade",
