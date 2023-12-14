@@ -420,7 +420,7 @@ export default class Flappy extends Phaser.Scene {
     }
   };
 
-  updateScore(_, gap) {
+  updateScore = (_, gap) => {
     this.score++;
     gap.destroy();
 
@@ -434,14 +434,14 @@ export default class Flappy extends Phaser.Scene {
     }
 
     console.log(this);
-    this.scene.updateScoreboard();
-  }
+    this.updateScoreboard();
+  };
 
   /**
    * Create pipes and gap in the game.
    * @param {object} scene - Game scene.
    */
-  makePipes() {
+  makePipes = () => {
     // removed soon
     if (!this.gameStarted || this.gameOver) return;
 
@@ -461,7 +461,7 @@ export default class Flappy extends Phaser.Scene {
       this.currentPipe.bottom
     );
     pipeBottom.body.allowGravity = false;
-  }
+  };
 
   /**
    * Move the bird in the screen.
@@ -522,26 +522,26 @@ export default class Flappy extends Phaser.Scene {
    * Restart the game.
    * Clean all groups, hide game over objects and stop game physics.
    */
-  restartGame() {
-    pipesGroup.clear(true, true);
-    pipesGroup.clear(true, true);
-    gapsGroup.clear(true, true);
-    scoreboardGroup.clear(true, true);
-    player.destroy();
-    gameOverBanner.visible = false;
-    restartButton.visible = false;
+  restartGame = () => {
+    this.pipesGroup.clear(true, true);
+    this.pipesGroup.clear(true, true);
+    this.gapsGroup.clear(true, true);
+    this.scoreboardGroup.clear(true, true);
+    this.player.destroy();
+    this.gameOverBanner.visible = false;
+    this.restartButton.visible = false;
 
-    const gameScene = game.scene.scenes[0];
-    prepareGame();
+    const gameScene = this;
+    this.prepareGame();
 
     gameScene.physics.resume();
-  }
+  };
 
   /**
    * Restart all variable and configurations, show main and recreate the bird.
    * @param {object} scene - Game scene.
    */
-  prepareGame() {
+  prepareGame = () => {
     this.framesMoveUp = 0;
     this.nextPipes = 0;
     this.currentPipe = this.assets.obstacle.pipe.green;
@@ -584,14 +584,14 @@ export default class Flappy extends Phaser.Scene {
     );
 
     this.ground.anims.play(this.assets.animation.ground.moving, true);
-  }
+  };
 
   /**
    * Start the game, create pipes and hide the main menu.
    * @param {object} scene - Game scene.
    */
 
-  startGame() {
+  startGame = () => {
     console.log("start game function reached");
     // change from scene to nothing?
     this.gameStarted = true;
@@ -605,5 +605,5 @@ export default class Flappy extends Phaser.Scene {
     score0.setDepth(20);
 
     this.makePipes();
-  }
+  };
 }
