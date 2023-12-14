@@ -372,6 +372,7 @@ export default class Flappy extends Phaser.Scene {
     });
 
     this.nextPipes++;
+
     if (this.nextPipes === 130) {
       this.makePipes();
       this.nextPipes = 0;
@@ -454,29 +455,30 @@ export default class Flappy extends Phaser.Scene {
    * @param {object} scene - Game scene.
    */
   makePipes = () => {
-    // removed soon
     if (!this.gameStarted || this.gameOver) return;
 
-    const coin = this.physics.add.sprite(270, 540, "coin");
+    const coin = this.physics.add.sprite(1920, 540, "coin");
     this.coinsGroup.add(coin);
     coin.body.allowGravity = false;
 
-    const pipeTopY = Phaser.Math.Between(-120, 120);
+    //
 
-    const gap = this.add.line(288, pipeTopY + 210, 0, 0, 0, 98);
-    this.gapsGroup.add(gap);
-    gap.body.allowGravity = false;
-    gap.visible = false;
+    // const pipeTopY = Phaser.Math.Between(-120, 120);
 
-    const pipeTop = this.pipesGroup.create(288, pipeTopY, this.currentPipe.top);
-    pipeTop.body.allowGravity = false;
+    // const gap = this.add.line(288, pipeTopY + 210, 0, 0, 0, 98);
+    // this.gapsGroup.add(gap);
+    // gap.body.allowGravity = false;
+    // gap.visible = false;
 
-    const pipeBottom = this.pipesGroup.create(
-      288,
-      pipeTopY + 920,
-      this.currentPipe.bottom
-    );
-    pipeBottom.body.allowGravity = false;
+    // const pipeTop = this.pipesGroup.create(288, pipeTopY, this.currentPipe.top);
+    // pipeTop.body.allowGravity = false;
+
+    // const pipeBottom = this.pipesGroup.create(
+    //   288,
+    //   pipeTopY + 920,
+    //   this.currentPipe.bottom
+    // );
+    // pipeBottom.body.allowGravity = false;
   };
 
   makeRings = () => {};
