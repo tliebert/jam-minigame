@@ -108,6 +108,7 @@ export default class Flappy extends Phaser.Scene {
   coinsGroup;
   resourceGroup;
   resourceObject;
+  resourceScoreboard;
   nextPipes;
   currentPipe;
   scoreboardGroup;
@@ -235,18 +236,20 @@ export default class Flappy extends Phaser.Scene {
     this.resourceGroup = this.physics.add.group();
 
     this.scoreboardGroup = this.physics.add.staticGroup();
-    this.ground = this.physics.add.sprite(
-      this.assets.scene.width,
-      458,
-      this.assets.scene.ground
-    );
+    this.resourceScoreboard = this.add.group();
 
-    this.ground.setCollideWorldBounds(true);
-    this.ground.setDepth(10);
+    // this.ground = this.physics.add.sprite(
+    //   this.assets.scene.width,
+    //   458,
+    //   this.assets.scene.ground
+    // );
+
+    // this.ground.setCollideWorldBounds(true);
+    // this.ground.setDepth(10);
 
     this.messageInitial = this.add.image(
-      this.assets.scene.width,
-      156,
+      this.assets.scene.width / 2,
+      540,
       this.assets.scene.messageInitial
     );
     this.messageInitial.setDepth(30);
@@ -257,25 +260,25 @@ export default class Flappy extends Phaser.Scene {
     );
 
     // Ground animations
-    this.anims.create({
-      key: this.assets.animation.ground.moving,
-      frames: this.anims.generateFrameNumbers(this.assets.scene.ground, {
-        start: 0,
-        end: 2,
-      }),
-      frameRate: 15,
-      repeat: -1,
-    });
-    this.anims.create({
-      key: this.assets.animation.ground.stop,
-      frames: [
-        {
-          key: this.assets.scene.ground,
-          frame: 0,
-        },
-      ],
-      frameRate: 20,
-    });
+    // this.anims.create({
+    //   key: this.assets.animation.ground.moving,
+    //   frames: this.anims.generateFrameNumbers(this.assets.scene.ground, {
+    //     start: 0,
+    //     end: 2,
+    //   }),
+    //   frameRate: 15,
+    //   repeat: -1,
+    // });
+    // this.anims.create({
+    //   key: this.assets.animation.ground.stop,
+    //   frames: [
+    //     {
+    //       key: this.assets.scene.ground,
+    //       frame: 0,
+    //     },
+    //   ],
+    //   frameRate: 20,
+    // });
 
     // Red Bird Animations
     this.anims.create({
@@ -344,15 +347,15 @@ export default class Flappy extends Phaser.Scene {
     // this.player.on("worldbounds", this.hitBird, this);
 
     this.gameOverBanner = this.add.image(
-      this.assets.scene.width,
-      206,
+      this.assets.scene.width / 2,
+      540,
       this.assets.scene.gameOver
     );
     this.gameOverBanner.setDepth(20);
     this.gameOverBanner.visible = false;
 
     this.restartButton = this.add
-      .image(this.assets.scene.width, 300, this.assets.scene.restart)
+      .image(this.assets.scene.width / 2, 640, this.assets.scene.restart)
       .setInteractive();
     this.restartButton.on("pointerdown", this.restartGame);
     this.restartButton.setDepth(20);
@@ -419,7 +422,7 @@ export default class Flappy extends Phaser.Scene {
     this.gameStarted = false;
 
     this.player.anims.play(this.getAnimationBird(this.birdName).stop);
-    this.ground.anims.play(this.assets.animation.ground.stop);
+    // this.ground.anims.play(this.assets.animation.ground.stop);
 
     this.gameOverBanner.visible = true;
     this.restartButton.visible = true;
@@ -431,49 +434,66 @@ export default class Flappy extends Phaser.Scene {
    *   @param {object} gap - Game object that was overlapped, in this case the gap.
    */
   updateScoreboard = () => {
-    this.scoreboardGroup.clear(true, true);
+    this.resourceScoreboard.clear(true, true);
 
-    const scoreAsString = this.score.toString();
-    if (scoreAsString.length == 1) {
-      this.scoreboardGroup
-        .create(
-          this.assets.scene.width,
-          30,
-          this.assets.scoreboard.base + this.score
-        )
-        .setDepth(10);
-    } else {
-      let initialPosition =
-        this.assets.scene.width -
-        (this.score.toString().length * this.assets.scoreboard.width) / 2;
+    // const scoreAsString = scores.toString();
+    let initialPosition = this.assets.scene.width / 2; // Initial position from the right
 
-      for (let i = 0; i < scoreAsString.length; i++) {
-        this.scoreboardGroup
-          .create(
-            initialPosition,
-            30,
-            this.assets.scoreboard.base + scoreAsString[i]
-          )
-          .setDepth(10);
-        initialPosition += this.assets.scoreboard.width;
+    for (const key in this.resourceObject) {
+      if (this.resourceObject.hasOwnProperty(key)) {
+        const text = this.add
+          .text(initialPosition, 30, `${key}: ${this.resourceObject[key]}`, {
+            fontFamily: "Arial",
+            fontSize: "16px",
+            fill: "#fff",
+          })
+          .setOrigin(1, 0.5); // Right-aligned text
+
+        this.resourceScoreboard.add(text);
+
+        initialPosition -= 100; // Adjust as needed based on your layout
       }
     }
+
+    // this.scoreboardGroup.clear(true, true);
+
+    // const scoreAsString = this.score.toString();
+    // if (scoreAsString.length == 1) {
+    //   this.scoreboardGroup
+    //     .create(
+    //       this.assets.scene.width,
+    //       30,
+    //       this.assets.scoreboard.base + this.score
+    //     )
+    //     .setDepth(10);
+    // } else {
+    //   let initialPosition =
+    //     this.assets.scene.width -
+    //     (this.score.toString().length * this.assets.scoreboard.width) / 2;
+
+    //   for (let i = 0; i < scoreAsString.length; i++) {
+    //     this.scoreboardGroup
+    //       .create(
+    //         initialPosition,
+    //         30,
+    //         this.assets.scoreboard.base + scoreAsString[i]
+    //       )
+    //       .setDepth(10);
+    //     initialPosition += this.assets.scoreboard.width;
+    //   }
+    // }
   };
 
-  updateScore = (_, gap) => {
-    this.score++;
-    gap.destroy();
+  updateScore = () => {
+    // if (this.score % 10 == 0) {
+    //   this.backgroundDay.visible = !this.backgroundDay.visible;
+    //   this.backgroundNight.visible = !this.backgroundNight.visible;
 
-    if (this.score % 10 == 0) {
-      this.backgroundDay.visible = !this.backgroundDay.visible;
-      this.backgroundNight.visible = !this.backgroundNight.visible;
+    //   if (this.currentPipe === this.assets.obstacle.pipe.green)
+    //     this.currentPipe = this.assets.obstacle.pipe.red;
+    //   else this.currentPipe = this.assets.obstacle.pipe.green;
+    // }
 
-      if (this.currentPipe === this.assets.obstacle.pipe.green)
-        this.currentPipe = this.assets.obstacle.pipe.red;
-      else this.currentPipe = this.assets.obstacle.pipe.green;
-    }
-
-    console.log(this);
     this.updateScoreboard();
   };
 
@@ -615,12 +635,10 @@ export default class Flappy extends Phaser.Scene {
 
   handleResourceCollision = (player, resource) => {
     this.physics.world.disableBody(resource.body);
-    console.log(resource);
-    console.log(resource.texture.key);
     let key = resource.texture.key;
     resource.destroy();
     this.resourceObject[key]++;
-    console.log(this.resourceObject);
+    this.updateScore();
   };
 
   /**
@@ -687,7 +705,7 @@ export default class Flappy extends Phaser.Scene {
       this.scene
     );
 
-    this.ground.anims.play(this.assets.animation.ground.moving, true);
+    // this.ground.anims.play(this.assets.animation.ground.moving, true);
   };
 
   /**
@@ -702,7 +720,7 @@ export default class Flappy extends Phaser.Scene {
     this.messageInitial.visible = false;
 
     const score0 = this.scoreboardGroup.create(
-      this.assets.scene.width,
+      this.assets.scene.width / 2,
       30,
       this.assets.scoreboard.number0
     );
