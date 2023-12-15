@@ -1,25 +1,5 @@
 import Phaser from "../lib/phaser.js";
 
-// const configurations = {
-//   type: Phaser.AUTO,
-//   width: 288,
-//   height: 512,
-//   physics: {
-//     default: "arcade",
-//     arcade: {
-//       gravity: {
-//         y: 300,
-//       },
-//       debug: false,
-//     },
-//   },
-//   scene: {
-//     preload: preload,
-//     create: create,
-//     update: update,
-//   },
-// };
-
 export default class Flappy extends Phaser.Scene {
   constructor() {
     super();
@@ -30,18 +10,6 @@ export default class Flappy extends Phaser.Scene {
       red: "bird-red",
       yellow: "bird-yellow",
       blue: "bird-blue",
-    },
-    obstacle: {
-      pipe: {
-        green: {
-          top: "pipe-green-top",
-          bottom: "pipe-green-bottom",
-        },
-        red: {
-          top: "pipe-red-top",
-          bottom: "pipe-red-bo",
-        },
-      },
     },
     scene: {
       width: 1920,
@@ -80,7 +48,7 @@ export default class Flappy extends Phaser.Scene {
   birdName;
   backgroundDay;
   ground;
-  nextPipes;
+  nextWave;
   gapsGroup;
   coin;
   coinsGroup;
@@ -149,7 +117,7 @@ export default class Flappy extends Phaser.Scene {
     this.backgroundDay = this.add
       .image(960, 540, this.assets.scene.background.day)
       .setInteractive();
-    this.backgroundDay.on("pointerdown", this.moveBird);
+    this.backgroundDay.on("pointerdown", this.moveCharacter);
 
     if (!this.resourceObject) {
       this.resourceObject = {
@@ -181,7 +149,7 @@ export default class Flappy extends Phaser.Scene {
     );
 
     this.prepareGame(this);
-    // this.player.on("worldbounds", this.hitBird, this);
+    // this.player.on("worldbounds", this.characterCollision, this);
 
     this.gameOverBanner = this.add.image(
       this.assets.scene.width / 2,
@@ -215,17 +183,6 @@ export default class Flappy extends Phaser.Scene {
     // //   this.physics.world.gravity.y = 200;
     // // }
 
-    this.pipesGroup.children.iterate(function (child) {
-      if (child == undefined) return;
-
-      if (child.x < -50) child.destroy();
-      else child.setVelocityX(-velocity); // velocicty times delta.
-    });
-
-    this.gapsGroup.children.iterate(function (child) {
-      child.body.setVelocityX(-velocity);
-    });
-
     this.coinsGroup.children.iterate(function (child) {
       child.body.setVelocityX(-velocity);
     });
@@ -235,23 +192,23 @@ export default class Flappy extends Phaser.Scene {
     });
 
     if (this.player.body.checkWorldBounds()) {
-      this.hitBird();
+      this.characterCollision();
     }
 
-    this.nextPipes++;
-    console.log(this.nextPipes);
+    this.nextWave++;
+    console.log(this.nextWave);
 
-    if (this.nextPipes === 130) {
+    if (this.nextWave === 130) {
       console.log("in update, making pipes");
-      this.makePipes();
-      this.nextPipes = 0;
+      this.makeWave();
+      this.nextWave = 0;
     }
   }
 
-  // Bird collides w/ something
+  // character collides w/ something
 
-  hitBird = () => {
-    console.log("hitBird triggered");
+  characterCollision = () => {
+    console.log("characterCollision triggered");
     this.physics.pause();
 
     this.gameOver = true;
@@ -288,7 +245,7 @@ export default class Flappy extends Phaser.Scene {
     this.updateScoreboard();
   };
 
-  makePipes = () => {
+  makeWave = () => {
     if (!this.gameStarted || this.gameOver) return;
 
     const arrayOfResourceNames = ["carrot", "coin", "bunny", "wildcard"];
@@ -315,7 +272,7 @@ export default class Flappy extends Phaser.Scene {
     });
   };
 
-  moveBird = () => {
+  moveCharacter = () => {
     if (this.gameOver) {
       return;
     }
@@ -325,10 +282,6 @@ export default class Flappy extends Phaser.Scene {
       this.startGame();
     }
   };
-
-  getRandomBird() {
-    return this.assets.bird.red;
-  }
 
   restartGame = () => {
     this.pipesGroup.clear(true, true);
@@ -367,9 +320,9 @@ export default class Flappy extends Phaser.Scene {
     this.gameOver = false;
     this.backgroundDay.visible = true;
     this.messageInitial.visible = true;
-    this.nextPipes = 0;
+    this.nextWave = 0;
 
-    this.birdName = this.getRandomBird();
+    this.birdName = this.assets.bird.red;
     this.player = this.physics.add.sprite(60, 265, this.birdName);
     // this.player.setCollideWorldBounds(true);
 
@@ -380,7 +333,7 @@ export default class Flappy extends Phaser.Scene {
     this.physics.add.collider(
       this.player,
       this.ground,
-      this.hitBird,
+      this.characterCollision,
       null,
       this.scene
     );
@@ -388,7 +341,7 @@ export default class Flappy extends Phaser.Scene {
     this.physics.add.collider(
       this.player,
       this.pipesGroup,
-      this.hitBird,
+      this.characterCollision,
       null,
       this.scene
     );
@@ -428,6 +381,6 @@ export default class Flappy extends Phaser.Scene {
 
     this.updateScore();
 
-    this.makePipes();
+    this.makeWave();
   };
 }
