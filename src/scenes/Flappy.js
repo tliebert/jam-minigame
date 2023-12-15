@@ -81,7 +81,7 @@ export default class Flappy extends Phaser.Scene {
       "../../assets/restart-button.png"
     );
 
-    // Birds
+    // Character
     this.load.spritesheet(
       this.assets.bird.red,
       "../../assets/bird-red-sprite.png",
@@ -90,27 +90,25 @@ export default class Flappy extends Phaser.Scene {
         frameHeight: 24,
       }
     );
-    this.load.spritesheet(
-      this.assets.bird.blue,
-      "../../assets/bird-blue-sprite.png",
-      {
-        frameWidth: 34,
-        frameHeight: 24,
-      }
-    );
-    this.load.spritesheet(
-      this.assets.bird.yellow,
-      "../../assets/bird-yellow-sprite.png",
-      {
-        frameWidth: 34,
-        frameHeight: 24,
-      }
-    );
 
-    this.load.image("coin", "../../assets/gold_1.png");
-    this.load.image("carrot", "../../assets/bronze_1.png");
-    this.load.image("bunny", "../../assets/jetpack.png");
-    this.load.image("wildcard", "../../assets/silver_1.png");
+    this.load.svg("car", "../../assets/car.svg", { width: 150, height: 150 });
+
+    this.load.svg("sweets", "../../assets/sweets.svg", {
+      width: 150,
+      height: 150,
+    });
+    this.load.svg("western", "../../assets/western.svg", {
+      width: 150,
+      height: 150,
+    });
+    this.load.svg("flower", "../../assets/flower.svg", {
+      width: 150,
+      height: 150,
+    });
+    this.load.svg("computer", "../../assets/computer.svg", {
+      width: 150,
+      height: 150,
+    });
   }
 
   create() {
@@ -121,10 +119,10 @@ export default class Flappy extends Phaser.Scene {
 
     if (!this.resourceObject) {
       this.resourceObject = {
-        carrot: 0,
-        coin: 0,
-        bunny: 0,
-        wildcard: 0,
+        sweets: 0,
+        computer: 0,
+        flower: 0,
+        western: 0,
       };
     }
 
@@ -248,7 +246,7 @@ export default class Flappy extends Phaser.Scene {
   makeWave = () => {
     if (!this.gameStarted || this.gameOver) return;
 
-    const arrayOfResourceNames = ["carrot", "coin", "bunny", "wildcard"];
+    const arrayOfResourceNames = ["sweets", "western", "computer", "flower"];
     const arrayOfYValues = [135, 405, 675, 945];
 
     const objectsToCreate = arrayOfResourceNames.map((iconName) => {
@@ -322,8 +320,7 @@ export default class Flappy extends Phaser.Scene {
     this.messageInitial.visible = true;
     this.nextWave = 0;
 
-    this.birdName = this.assets.bird.red;
-    this.player = this.physics.add.sprite(60, 265, this.birdName);
+    this.player = this.physics.add.sprite(120, 540, "car");
     // this.player.setCollideWorldBounds(true);
 
     this.player.body.allowGravity = true;
