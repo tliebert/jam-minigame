@@ -73,7 +73,7 @@ export default class Flappy extends Phaser.Scene {
   physicsMultiplier = 75;
   timerText;
   timerStarted = false;
-  countdownTime = 30;
+  countdownTime = 60;
 
   preload() {
     // Backgrounds and ground
@@ -263,6 +263,8 @@ export default class Flappy extends Phaser.Scene {
     this.gameOver = true;
     this.gameStarted = false;
 
+    this.gameOverBanner.visible = false;
+    this.restartButton.visible = false;
     this.gameFinishedBanner.visible = true;
   };
 
@@ -429,8 +431,18 @@ export default class Flappy extends Phaser.Scene {
     resource.destroy();
     this.triggerSpeedAndVelocityIncrease();
 
-    this.resourceObject[key][0]++;
-    this.resourceObject[key][1]++;
+    const arrayOfAdds = [
+      [2, 0],
+      [1, 1],
+      [1, 1],
+      [0, 2],
+    ];
+    let randomIndex = Phaser.Math.Between(1, 4) - 1;
+
+    const addArray = arrayOfAdds[randomIndex]; // [1, 1]
+
+    this.resourceObject[key][0] += addArray[0];
+    this.resourceObject[key][1] += addArray[1];
 
     this.updateScore();
   };
