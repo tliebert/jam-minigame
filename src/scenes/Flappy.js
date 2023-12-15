@@ -62,12 +62,23 @@ export default class Flappy extends Phaser.Scene {
   itemVelocity = 450;
   iconWidth = 100;
   iconHeight = 100;
+  physicsStrengthInitial = 300;
+  physicsStrength = 300;
+  physicsMax = 1500;
+  speedInitial = 450;
+  speedMax = 1500;
+  speedMultiplier = 75;
+  physicsMultiplier = 75;
 
   preload() {
     // Backgrounds and ground
-    this.load.image(
+    this.load.svg(
       this.assets.scene.background.day,
-      "../../assets/mountain-background.png"
+      "../../assets/background.svg",
+      {
+        width: 1920,
+        height: 1080,
+      }
     );
 
     // Start game
@@ -173,11 +184,10 @@ export default class Flappy extends Phaser.Scene {
     if (this.gameOver || !this.gameStarted) return;
 
     if (this.input.activePointer.leftButtonDown()) {
-      console.log("left clicker down");
       //   this.player.setVelocityY(300);
-      this.physics.world.gravity.y = 400;
+      this.physics.world.gravity.y = this.physicsStrength;
     } else {
-      this.physics.world.gravity.y = -400;
+      this.physics.world.gravity.y = -this.physicsStrength;
     }
     //  else {
     // //   this.physics.world.gravity.y = 200;
@@ -196,7 +206,6 @@ export default class Flappy extends Phaser.Scene {
     }
 
     this.nextWave++;
-    console.log(this.nextWave);
 
     if (this.nextWave === 130) {
       console.log("in update, making pipes");
@@ -292,6 +301,9 @@ export default class Flappy extends Phaser.Scene {
     this.gameOverBanner.visible = false;
     this.restartButton.visible = false;
 
+    this.itemVelocity = this.speedInitial;
+    this.physicsStrength = this.physicsStrengthInitial;
+
     const gameScene = this;
     this.prepareGame();
 
@@ -305,12 +317,24 @@ export default class Flappy extends Phaser.Scene {
     console.log(this.coinScore);
   };
 
+  triggerSpeedAndVelocityIncrease = () => {
+    if (this.itemVelocity < this.speedMax) {
+      this.itemVelocity += this.speedMultiplier;
+      console.log("itemVelocity", this.itemVelocity);
+    }
+    if (this.physicsStrength < this.physicsMax) {
+      this.physicsStrength += this.physicsMultiplier;
+      console.log("physics strength", this.physicsStrength);
+    }
+  };
+
   // this handles all collisions with collectable icons
 
   handleResourceCollision = (player, resource) => {
     this.physics.world.disableBody(resource.body);
     let key = resource.texture.key;
     resource.destroy();
+    this.triggerSpeedAndVelocityIncrease();
     this.resourceObject[key]++;
     this.updateScore();
   };
@@ -325,7 +349,7 @@ export default class Flappy extends Phaser.Scene {
     this.player = this.physics.add.sprite(120, 540, "car");
     // this.player.setCollideWorldBounds(true);
 
-    this.player.body.allowGravity = true;
+    this.player.body.allowGravity = false;
 
     // add colliders and overlaps.
 
@@ -374,6 +398,8 @@ export default class Flappy extends Phaser.Scene {
 
   startGame = () => {
     console.log("start game function reached");
+    this.player.body.allowGravity = true;
+
     // change from scene to nothing?
     this.gameStarted = true;
     this.messageInitial.visible = false;
