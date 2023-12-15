@@ -73,7 +73,7 @@ export default class Flappy extends Phaser.Scene {
   physicsMultiplier = 75;
   timerText;
   timerStarted = false;
-  countdownTime = 5;
+  countdownTime = 30;
 
   preload() {
     // Backgrounds and ground
@@ -144,10 +144,11 @@ export default class Flappy extends Phaser.Scene {
 
     if (!this.resourceObject) {
       this.resourceObject = {
-        sweets: 0,
-        computer: 0,
-        flower: 0,
-        western: 0,
+        resourcenames: ["sweets", "western", "computer", "flower"],
+        sweets: [0, 0],
+        western: [0, 0],
+        computer: [0, 0],
+        flower: [0, 0],
       };
     }
 
@@ -237,7 +238,6 @@ export default class Flappy extends Phaser.Scene {
     this.nextWave++;
 
     if (this.nextWave === 130) {
-      console.log("in update, making pipes");
       this.makeWave();
       this.nextWave = 0;
     }
@@ -269,24 +269,48 @@ export default class Flappy extends Phaser.Scene {
   updateScoreboard = () => {
     this.resourceScoreboard.clear(true, true);
 
+    const scoreBoardNameTranslations = {
+      sweets: "Athleisure",
+      western: "Western",
+      flower: "Cottagecore",
+      computer: "Y2K",
+    };
+
     // const scoreAsString = scores.toString();
     let initialPosition = this.assets.scene.width - 50; // Initial position from the right
 
-    for (const key in this.resourceObject) {
-      if (this.resourceObject.hasOwnProperty(key)) {
-        const text = this.add
-          .text(initialPosition, 30, `${key}: ${this.resourceObject[key]}`, {
+    this.resourceObject.resourcenames.forEach((resourcename) => {
+      const text = this.add
+        .text(
+          initialPosition,
+          30,
+          `${scoreBoardNameTranslations[resourcename]} (Hats :${this.resourceObject[resourcename][0]} | Tops :${this.resourceObject[resourcename][1]})`,
+          {
             fontFamily: "Arial",
             fontSize: "32px",
             fill: "#fff",
-          })
-          .setOrigin(1, 0.5); // Right-aligned text
+          }
+        )
+        .setOrigin(1, 0.5);
+      this.resourceScoreboard.add(text); // what is this here?
+      initialPosition -= text.width + 50;
+    });
 
-        this.resourceScoreboard.add(text);
+    // for (const key in this.resourceObject) {
+    //   if (this.resourceObject.hasOwnProperty(key)) {
+    //     const text = this.add
+    //       .text(initialPosition, 30, `${key}: ${this.resourceObject[key]}`, {
+    //         fontFamily: "Arial",
+    //         fontSize: "32px",
+    //         fill: "#fff",
+    //       })
+    //       .setOrigin(1, 0.5); // Right-aligned text
 
-        initialPosition -= text.width + 50; // Adjust as needed based on your layout
-      }
-    }
+    //     this.resourceScoreboard.add(text);
+
+    //     initialPosition -= text.width + 50; // Adjust as needed based on your layout
+    //   }
+    // }
   };
 
   updateScore = () => {
@@ -296,7 +320,7 @@ export default class Flappy extends Phaser.Scene {
   makeWave = () => {
     if (!this.gameStarted || this.gameOver) return;
 
-    const arrayOfResourceNames = ["sweets", "western", "computer", "flower"];
+    const arrayOfResourceNames = this.resourceObject["resourcenames"];
     const arrayOfYValues = [135, 405, 675, 945];
 
     const objectsToCreate = arrayOfResourceNames.map((iconName) => {
@@ -404,7 +428,10 @@ export default class Flappy extends Phaser.Scene {
     let key = resource.texture.key;
     resource.destroy();
     this.triggerSpeedAndVelocityIncrease();
-    this.resourceObject[key]++;
+
+    this.resourceObject[key][0]++;
+    this.resourceObject[key][1]++;
+
     this.updateScore();
   };
 
