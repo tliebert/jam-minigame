@@ -73,7 +73,7 @@ export default class Flappy extends Phaser.Scene {
   physicsMultiplier = 75;
   timerText;
   timerStarted = false;
-  countdownTime = 60;
+  countdownTime = 5;
 
   preload() {
     // Backgrounds and ground
@@ -92,7 +92,7 @@ export default class Flappy extends Phaser.Scene {
       "../../assets/minigame_initial_message.png"
     );
 
-    // End game
+    // crashed
     this.load.image(
       this.assets.scene.gameOver,
       "../../assets/crashed_message.png"
@@ -102,6 +102,9 @@ export default class Flappy extends Phaser.Scene {
       this.assets.scene.restart,
       "../../assets/try_again_button.png"
     );
+
+    // minigame finished
+    this.load.image("continue", "../../assets/continue_message.png");
 
     // Character
     this.load.spritesheet(
@@ -170,6 +173,13 @@ export default class Flappy extends Phaser.Scene {
 
     this.prepareGame(this);
     // this.player.on("worldbounds", this.characterCollision, this);
+
+    this.gameFinishedBanner = this.add
+      .image(this.assets.scene.width / 2, 540, "continue")
+      .setInteractive();
+    this.gameFinishedBanner.visible = false;
+    this.gameFinishedBanner.setDepth(20);
+    this.gameFinishedBanner.on("pointerdown", this.transitionToNextScene);
 
     this.gameOverBanner = this.add.image(
       this.assets.scene.width / 2,
@@ -253,7 +263,6 @@ export default class Flappy extends Phaser.Scene {
     this.gameStarted = false;
 
     this.gameFinishedBanner.visible = true;
-    this.moveOnButton.visible = true;
   };
 
   updateScoreboard = () => {
@@ -396,6 +405,10 @@ export default class Flappy extends Phaser.Scene {
     this.triggerSpeedAndVelocityIncrease();
     this.resourceObject[key]++;
     this.updateScore();
+  };
+
+  transitionToNextScene = () => {
+    console.log("hey im trying to go to the next scene");
   };
 
   prepareGame = () => {
