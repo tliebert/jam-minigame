@@ -68,6 +68,7 @@ export default class Flappy extends Phaser.Scene {
   physicsStrength = 300;
   physicsMax = 1500;
   speedInitial = 450;
+  speedFactorAdjustment = 10; //speed absolute value divided by this #
   speedMax = 1500;
   speedMultiplier = 75;
   physicsMultiplier = 75;
@@ -208,7 +209,9 @@ export default class Flappy extends Phaser.Scene {
     // Set the initial countdown time to 60 seconds (1 minute)
   }
 
-  update() {
+  update(time, delta) {
+    let that = this;
+
     let velocity = this.itemVelocity;
 
     if (this.gameOver || !this.gameStarted) return;
@@ -223,12 +226,17 @@ export default class Flappy extends Phaser.Scene {
     // //   this.physics.world.gravity.y = 200;
     // // }
 
-    this.coinsGroup.children.iterate(function (child) {
-      child.body.setVelocityX(-velocity);
-    });
+    // this.coinsGroup.children.iterate((child) => {
+    //   child.body.setVelocityX((-velocity / this.speedFactorAdjustment) * delta);
+    // });
 
-    this.resourceGroup.children.iterate(function (child) {
-      child.body.setVelocityX(-velocity);
+    this.resourceGroup.children.iterate((child) => {
+      child.body.setVelocityX((-velocity / this.speedFactorAdjustment) * delta);
+      console.log(
+        "from update resourceGroup iteration, velocity",
+        velocity,
+        this.speedFactorAdjustment
+      );
     });
 
     if (this.player.body.checkWorldBounds()) {
