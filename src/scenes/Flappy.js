@@ -284,10 +284,10 @@ export default class Flappy extends Phaser.Scene {
         .text(
           initialPosition,
           30,
-          `${scoreBoardNameTranslations[resourcename]} (Hats :${this.resourceObject[resourcename][0]} | Tops :${this.resourceObject[resourcename][1]})`,
+          `${scoreBoardNameTranslations[resourcename]} (Hats : ${this.resourceObject[resourcename][0]} | Tops : ${this.resourceObject[resourcename][1]})`,
           {
             fontFamily: "Arial",
-            fontSize: "32px",
+            fontSize: "30px",
             fill: "#fff",
           }
         )
@@ -447,6 +447,7 @@ export default class Flappy extends Phaser.Scene {
     this.nextWave = 0;
 
     this.player = this.physics.add.sprite(120, 540, "car");
+    this.player.setSize(100, 60);
     // this.player.setCollideWorldBounds(true);
 
     this.player.body.allowGravity = false;
