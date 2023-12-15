@@ -199,6 +199,7 @@ export default class Flappy extends Phaser.Scene {
     //Timer
 
     this.timerText = this.add.text(16, 16, "Time: 1:00", {
+      fontFamily: "Arial",
       fontSize: "32px",
       fill: "#fff",
     });
@@ -269,21 +270,21 @@ export default class Flappy extends Phaser.Scene {
     this.resourceScoreboard.clear(true, true);
 
     // const scoreAsString = scores.toString();
-    let initialPosition = this.assets.scene.width / 2; // Initial position from the right
+    let initialPosition = this.assets.scene.width - 50; // Initial position from the right
 
     for (const key in this.resourceObject) {
       if (this.resourceObject.hasOwnProperty(key)) {
         const text = this.add
           .text(initialPosition, 30, `${key}: ${this.resourceObject[key]}`, {
             fontFamily: "Arial",
-            fontSize: "16px",
+            fontSize: "32px",
             fill: "#fff",
           })
           .setOrigin(1, 0.5); // Right-aligned text
 
         this.resourceScoreboard.add(text);
 
-        initialPosition -= 100; // Adjust as needed based on your layout
+        initialPosition -= text.width + 50; // Adjust as needed based on your layout
       }
     }
   };
