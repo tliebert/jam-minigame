@@ -69,6 +69,7 @@ export default class Flappy extends Phaser.Scene {
   speedMax = 1500;
   speedMultiplier = 75;
   physicsMultiplier = 75;
+  timerText;
 
   preload() {
     // Backgrounds and ground
@@ -176,6 +177,43 @@ export default class Flappy extends Phaser.Scene {
     this.restartButton.on("pointerdown", this.restartGame);
     this.restartButton.setDepth(20);
     this.restartButton.visible = false;
+
+    //Timer
+
+    this.timerText = this.add.text(16, 16, "Time: 1:00", {
+      fontSize: "32px",
+      fill: "#fff",
+    });
+
+    // Set the initial countdown time to 60 seconds (1 minute)
+
+    var countdownTime = 60;
+
+    this.time.addEvent({
+      delay: 1000,
+      callback: function () {
+        // Update the countdown time
+        countdownTime--;
+
+        // Update the timer text
+        var minutes = Math.floor(countdownTime / 60);
+        var seconds = countdownTime % 60;
+        this.timerText.setText(
+          "Time: " + minutes + ":" + (seconds < 10 ? "0" : "") + seconds
+        );
+
+        // Check if the countdown has reached 0
+        if (countdownTime <= 0) {
+          // Do something when the timer reaches 0 (e.g., end the game)
+          this.characterCollision();
+          console.log("Time is up!");
+          this.timerText.setText("Outta Time");
+          // You can add more logic here for what happens when the timer reaches 0
+        }
+      },
+      callbackScope: this,
+      loop: true, // Repeat the event every second
+    });
   }
 
   update() {
