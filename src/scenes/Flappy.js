@@ -42,7 +42,9 @@ export default class Flappy extends Phaser.Scene {
   gameStarted;
   upButton;
   restartButton;
+  moveOnButton;
   gameOverBanner;
+  gameFinishedBanner;
   messageInitial;
   player;
   birdName;
@@ -70,6 +72,8 @@ export default class Flappy extends Phaser.Scene {
   speedMultiplier = 75;
   physicsMultiplier = 75;
   timerText;
+  timerStarted = false;
+  countdownTime = 60;
 
   preload() {
     // Backgrounds and ground
@@ -85,14 +89,18 @@ export default class Flappy extends Phaser.Scene {
     // Start game
     this.load.image(
       this.assets.scene.messageInitial,
-      "../../assets/message-initial.png"
+      "../../assets/minigame_initial_message.png"
     );
 
     // End game
-    this.load.image(this.assets.scene.gameOver, "../../assets/gameover.png");
+    this.load.image(
+      this.assets.scene.gameOver,
+      "../../assets/crashed_message.png"
+    );
+
     this.load.image(
       this.assets.scene.restart,
-      "../../assets/restart-button.png"
+      "../../assets/try_again_button.png"
     );
 
     // Character
@@ -186,34 +194,6 @@ export default class Flappy extends Phaser.Scene {
     });
 
     // Set the initial countdown time to 60 seconds (1 minute)
-
-    var countdownTime = 60;
-
-    this.time.addEvent({
-      delay: 1000,
-      callback: function () {
-        // Update the countdown time
-        countdownTime--;
-
-        // Update the timer text
-        var minutes = Math.floor(countdownTime / 60);
-        var seconds = countdownTime % 60;
-        this.timerText.setText(
-          "Time: " + minutes + ":" + (seconds < 10 ? "0" : "") + seconds
-        );
-
-        // Check if the countdown has reached 0
-        if (countdownTime <= 0) {
-          // Do something when the timer reaches 0 (e.g., end the game)
-          this.characterCollision();
-          console.log("Time is up!");
-          this.timerText.setText("Outta Time");
-          // You can add more logic here for what happens when the timer reaches 0
-        }
-      },
-      callbackScope: this,
-      loop: true, // Repeat the event every second
-    });
   }
 
   update() {
@@ -263,6 +243,17 @@ export default class Flappy extends Phaser.Scene {
 
     this.gameOverBanner.visible = true;
     this.restartButton.visible = true;
+  };
+
+  gameFinished = () => {
+    console.log("game finished");
+    this.physics.pause();
+
+    this.gameOver = true;
+    this.gameStarted = false;
+
+    this.gameFinishedBanner.visible = true;
+    this.moveOnButton.visible = true;
   };
 
   updateScoreboard = () => {
@@ -327,6 +318,36 @@ export default class Flappy extends Phaser.Scene {
     if (!this.gameStarted) {
       console.log("game started");
       this.startGame();
+    }
+
+    if (!this.timerStarted) {
+      this.time.addEvent({
+        delay: 1000,
+        callback: function () {
+          // Update the countdown time
+          this.countdownTime--;
+
+          // Update the timer text
+          var minutes = Math.floor(this.countdownTime / 60);
+          var seconds = this.countdownTime % 60;
+          this.timerText.setText(
+            "Time: " + minutes + ":" + (seconds < 10 ? "0" : "") + seconds
+          );
+
+          // Check if the countdown has reached 0
+          if (this.countdownTime <= 0) {
+            // Do something when the timer reaches 0 (e.g., end the game)
+            this.gameFinished();
+            console.log("Time is up!");
+            this.timerText.setText("Outta Time");
+            // You can add more logic here for what happens when the timer reaches 0
+          }
+        },
+        callbackScope: this,
+        loop: true, // Repeat the event every second
+      });
+
+      this.timerStarted = true;
     }
   };
 
