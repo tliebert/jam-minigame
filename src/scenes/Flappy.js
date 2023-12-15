@@ -59,7 +59,9 @@ export default class Flappy extends Phaser.Scene {
   score;
   gravityToggle = false;
   coinScore = 0;
-  itemVelocity = 400;
+  itemVelocity = 450;
+  iconWidth = 100;
+  iconHeight = 100;
 
   preload() {
     // Backgrounds and ground
@@ -94,20 +96,20 @@ export default class Flappy extends Phaser.Scene {
     this.load.svg("car", "../../assets/car.svg", { width: 150, height: 150 });
 
     this.load.svg("sweets", "../../assets/sweets.svg", {
-      width: 150,
-      height: 150,
+      width: this.iconWidth,
+      height: this.iconHeight,
     });
     this.load.svg("western", "../../assets/western.svg", {
-      width: 150,
-      height: 150,
+      width: this.iconWidth,
+      height: this.iconHeight,
     });
     this.load.svg("flower", "../../assets/flower.svg", {
-      width: 150,
-      height: 150,
+      width: this.iconWidth,
+      height: this.iconHeight,
     });
     this.load.svg("computer", "../../assets/computer.svg", {
-      width: 150,
-      height: 150,
+      width: this.iconWidth,
+      height: this.iconHeight,
     });
   }
 
