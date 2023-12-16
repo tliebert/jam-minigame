@@ -117,7 +117,19 @@ export default class Flappy extends Phaser.Scene {
       }
     );
 
-    this.load.svg("car", "../../assets/car.svg", { width: 150, height: 150 });
+    this.load.svg("car", "../../assets/car.svg", { width: 200, height: 200 });
+
+    this.load.svg("hat", "../../assets/icon_hat_and_shirts.svg", {
+      width: 30,
+      height: 30,
+    });
+
+    this.load.svg("shirt", "../../assets/shirt.svg", {
+      width: 30,
+      height: 30,
+    });
+
+    // resources
 
     this.load.svg("sweets", "../../assets/sweets.svg", {
       width: this.iconWidth,
@@ -135,6 +147,13 @@ export default class Flappy extends Phaser.Scene {
       width: this.iconWidth,
       height: this.iconHeight,
     });
+
+    // hat and top logo
+
+    // this.load.svg("hat", "../../assets/sweets.svg", {
+    //   width: this.iconWidth,
+    //   height: this.iconHeight,
+    // });
   }
 
   create() {
@@ -232,11 +251,6 @@ export default class Flappy extends Phaser.Scene {
 
     this.resourceGroup.children.iterate((child) => {
       child.body.setVelocityX((-velocity / this.speedFactorAdjustment) * delta);
-      console.log(
-        "from update resourceGroup iteration, velocity",
-        velocity,
-        this.speedFactorAdjustment
-      );
     });
 
     if (this.player.body.checkWorldBounds()) {
@@ -277,8 +291,6 @@ export default class Flappy extends Phaser.Scene {
   };
 
   updateScoreboard = () => {
-    this.resourceScoreboard.clear(true, true);
-
     const scoreBoardNameTranslations = {
       sweets: "Athleisure",
       western: "Western",
@@ -286,41 +298,156 @@ export default class Flappy extends Phaser.Scene {
       computer: "Y2K",
     };
 
-    // const scoreAsString = scores.toString();
-    let initialPosition = this.assets.scene.width - 50; // Initial position from the right
+    this.resourceScoreboard.clear(true, true);
+
+    let initialPosition = 200;
 
     this.resourceObject.resourcenames.forEach((resourcename) => {
-      const text = this.add
-        .text(
-          initialPosition,
-          30,
-          `${scoreBoardNameTranslations[resourcename]} (Hats : ${this.resourceObject[resourcename][0]} | Tops : ${this.resourceObject[resourcename][1]})`,
-          {
-            fontFamily: "Arial",
-            fontSize: "30px",
-            fill: "#fff",
-          }
-        )
-        .setOrigin(1, 0.5);
-      this.resourceScoreboard.add(text); // what is this here?
-      initialPosition -= text.width + 50;
+      // Create a container to group text and image
+      const container = this.add.container(initialPosition, 30);
+
+      // Create an image using the imported SVG texture
+      const styleName = this.add.text(
+        0,
+        0,
+        scoreBoardNameTranslations[resourcename],
+        {
+          fontFamily: "Arial",
+          fontSize: "30px",
+          fill: "#fff",
+        }
+      );
+
+      const hatLogo = this.add.image(styleName.width + 20, 20, "hat");
+
+      const hatNumber = this.add.text(
+        hatLogo.x + hatLogo.width + 10,
+        0,
+        `${this.resourceObject[resourcename][0]}`,
+        {
+          fontFamily: "Arial",
+          fontSize: "30px",
+          fill: "#fff",
+        }
+      );
+
+      const topLogo = this.add.image(
+        hatNumber.x + (hatNumber.width + 30),
+        20,
+        "shirt"
+      );
+
+      const topNumber = this.add.text(
+        topLogo.x + topLogo.width + 10,
+        0,
+        `${this.resourceObject[resourcename][1]}`,
+        {
+          fontFamily: "Arial",
+          fontSize: "30px",
+          fill: "#fff",
+        }
+      );
+
+      container.add([styleName, hatLogo, hatNumber, topLogo, topNumber]);
+
+      this.resourceScoreboard.add(container); // add the container to the scoreboard
+
+      // why do containers have zero width. This is javascript.
+
+      let totalWidth = [
+        styleName,
+        hatLogo,
+        hatNumber,
+        topLogo,
+        topNumber,
+      ].reduce((acc, curr) => {
+        return (acc += curr.width);
+      }, 0);
+
+      initialPosition += totalWidth + 100;
     });
 
-    // for (const key in this.resourceObject) {
-    //   if (this.resourceObject.hasOwnProperty(key)) {
-    //     const text = this.add
-    //       .text(initialPosition, 30, `${key}: ${this.resourceObject[key]}`, {
+    // const scoreBoardNameTranslations = {
+    //   sweets: "Athleisure",
+    //   western: "Western",
+    //   flower: "Cottagecore",
+    //   computer: "Y2K",
+    // };
+
+    // this.resourceScoreboard.clear(true, true);
+
+    // let initialPosition = this.assets.scene.width - 50;
+
+    // // this.resourceObject.resourcenames
+
+    // ["sweets"].forEach((resourcename) => {
+    //   // Create a container to group text and image
+    //   const container = this.add.container(initialPosition, 30);
+
+    //   // Create an image using the imported SVG texture
+
+    //   const styleName = this.add
+    //     .text`${scoreBoardNameTranslations[resourcename]}`;
+    //   const hatLogo = this.add.image(0, 0, "sweets"); //logo.setScale if needed
+    //   const topLogo = this.add.image(0, 0, "western");
+    //   const hatNumber = this.add.text(
+    //     0,
+    //     0,
+    //     `${this.resourceObject[resourcename][0]}`,
+    //     {
+    //       fontFamily: "Arial",
+    //       fontSize: "30px",
+    //       fill: "#fff",
+    //     }
+    //   );
+
+    //   const topNumber = this.add.text(
+    //     0,
+    //     0,
+    //     `${this.resourceObject[resourcename][1]}`,
+    //     {
+    //       fontFamily: "Arial",
+    //       fontSize: "30px",
+    //       fill: "#fff",
+    //     }
+    //   );
+    //   container.add([styleName, hatLogo, hatNumber, topLogo, topNumber]); // add both image and text to the container
+
+    //   this.resourceScoreboard.add(container); // add the container to the scoreboard
+
+    //   initialPosition -= container.width + 50; // adjust the spacing
+    // });
+
+    //////////////// current code
+
+    // this.resourceScoreboard.clear(true, true);
+
+    // const scoreBoardNameTranslations = {
+    //   sweets: "Athleisure",
+    //   western: "Western",
+    //   flower: "Cottagecore",
+    //   computer: "Y2K",
+    // };
+
+    // // const scoreAsString = scores.toString();
+    // let initialPosition = this.assets.scene.width - 50; // Initial position from the right
+
+    // this.resourceObject.resourcenames.forEach((resourcename) => {
+    //   const text = this.add
+    //     .text(
+    //       initialPosition,
+    //       30,
+    //       `${scoreBoardNameTranslations[resourcename]} (Hats : ${this.resourceObject[resourcename][0]} | Tops : ${this.resourceObject[resourcename][1]})`,
+    //       {
     //         fontFamily: "Arial",
-    //         fontSize: "32px",
+    //         fontSize: "30px",
     //         fill: "#fff",
-    //       })
-    //       .setOrigin(1, 0.5); // Right-aligned text
-
-    //     this.resourceScoreboard.add(text);
-
-    //     initialPosition -= text.width + 50; // Adjust as needed based on your layout
-    //   }
-    // }
+    //       }
+    //     )
+    //     .setOrigin(1, 0.5);
+    //   this.resourceScoreboard.add(text); // what is this here?
+    //   initialPosition -= text.width + 50;
+    // });
   };
 
   updateScore = () => {
